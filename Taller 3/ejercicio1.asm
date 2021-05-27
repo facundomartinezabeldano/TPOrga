@@ -20,7 +20,7 @@
 0x8C07	->	cero
 0x8C08	->	huboOverFlow
 0x8C10	->	dioNegativo
-0x8C13	->	finOk
+0x8C14	->	finOk
 
 desplazamientos:
 JE  cero = 0x8C07 - 0x8C05 (positivo) = 0x02 = 0000 0010 = (2)

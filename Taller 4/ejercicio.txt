@@ -1,0 +1,27 @@
+a)¿Cual es el tamaño de la memoria?
+rta: 256 palabras / 256 bytes
+
+b)¿Cuántas instruciones sin operandos se podrían agregar respetando el formato de instrucción actual?
+rta: ( 2^11 - 10 )  pues tenemos instruciones de 16 bits
+
+c)Sin respetar el formato de instruccion ¿cuantas instrucciones sin operandos se pueden agregar?
+rta: 2^5 
+
+d)¿Que tamaño tiene el PC?
+rta: 8 bits (1 palabra) / 1 byte
+
+e)¿Donde se encuentra y que tamaño tiene el IR?
+rta: abajo a la izquierda (?)
+     cada IR tiene 8 bits / 1byte , 1 para high, 1 para low.
+
+Checkpoint 1:
+a) Incrementa el PC
+b) Habilita la escritura de salida de la ALU
+c)
+d) La señal habilita la entrada al buss para un valor inmediato  
+
+
+
+Checkpoint 2:
+a) Hay un loop JC seguir da carry siempre pues da carry al principio.
+b) 
