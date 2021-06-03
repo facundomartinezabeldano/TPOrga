@@ -16,12 +16,48 @@ rta: abajo a la izquierda (?)
 
 Checkpoint 1:
 a) Incrementa el PC
-b) Habilita la escritura de salida de la ALU
-c)
+b) Habilita la escritura de salida de la ALU / Habilita la escritura de las flags de la ALU
+c) Saltos condicionales:
+                        
 d) La señal habilita la entrada al buss para un valor inmediato  
 
 
 
 Checkpoint 2:
 a) Hay un loop JC seguir da carry siempre pues da carry al principio.
-b) 
+b) Necesitamos saber en que direccion es cargada el programa
+c) Dos ciclos de reloj
+
+
+
+Checkpoint 3:
+a) Se corta:
+          ALU:              No podriamos elegir la operacion
+          Memory:           No podriamos direccionar a memoria
+          microOrgaSmall:   No le llegarian las flags a la ControlUnit
+          Registers:        No podriamos ver el registro que sale
+          PC:               No podriamos cargar el PC
+          Decode:           No podriamos operar con valores inmediatos (xq no veriamos los primeros 8 bits)
+          ControlUnit:      No podriamos aumentar el microPC
+
+b) Vale siempre cero:   
+          ALU:              Estarias siempre eligiendo la operacion 0 de los multiplexores
+          Memory:           Estarias apuntando siempre a la misma direccion de memoria
+          microOrgaSmall:   No funcionarian los jump's xq tendrias siempre todas las flags en 000
+          Registers:        No estarias nunca habilitando la salida
+          PC:               No dejaria cargar nada en el PC
+          Decode:           Estarias siempre operando con el valor inmediato 00000000
+          ControlUnit:      Estarias siempre direccionando a la 000 de la ROM
+
+
+
+Checkpoint 4:
+
+main:      MOV R1 0x00
+           MOV R0 0xn
+           ADD R1 R0
+           SUB R0 0x01
+           JZ continuar
+           JMP main
+continuar:
+
