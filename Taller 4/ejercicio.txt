@@ -5,7 +5,8 @@ b)¿Cuántas instruciones sin operandos se podrían agregar respetando el format
 rta: ( 2^11 - 10 )  pues tenemos instruciones de 16 bits
 
 c)Sin respetar el formato de instruccion ¿cuantas instrucciones sin operandos se pueden agregar?
-rta: 2^5 
+rta: 2^5
+rta: 2^8
 
 d)¿Que tamaño tiene el PC?
 rta: 8 bits (1 palabra) / 1 byte
@@ -18,15 +19,28 @@ Checkpoint 1:
 a) Incrementa el PC
 b) Habilita la escritura de salida de la ALU / Habilita la escritura de las flags de la ALU
 c) Saltos condicionales:
-                        
-d) La señal habilita la entrada al buss para un valor inmediato  
+                       En la ROM tenemos cargadas las microoperaciones necesarias para realizar los saltos condicionales.
+                       Cada micro instruccion es una señal que tengo que prender y apagar para hacer ie un ADD habilitar salidas... etc.
+                       El micro PC apunta a la micro instruccion necesaria para hace cada uno de los saltos condicionales
+                                                                                          
+d) La señal habilita la entrada al buss para un valor inmediato 
 
 
 
 Checkpoint 2:
 a) Hay un loop JC seguir da carry siempre pues da carry al principio.
 b) Necesitamos saber en que direccion es cargada el programa
-c) Dos ciclos de reloj
+c) 49 de reloj
+d) para el ADD son 5 micro instrucciones:
+                                        RB_enOut  ALU_enA  RB_selectIndexOut=0
+                                        RB_enOut  ALU_enB  RB_selectIndexOut=1
+                                        ALU_OP=ADD ALU_opW
+                                        RB_enIn   ALU_enOut RB_selectIndexIn=0
+                                        reset_microOp
+   para el salto son 2:
+                         PC_load DE_enOutImm
+                         reset_microOp
+
 
 
 
@@ -43,11 +57,20 @@ a) Se corta:
 b) Vale siempre cero:   
           ALU:              Estarias siempre eligiendo la operacion 0 de los multiplexores
           Memory:           Estarias apuntando siempre a la misma direccion de memoria
-          microOrgaSmall:   No funcionarian los jump's xq tendrias siempre todas las flags en 000
+          microOrgaSmall:   No servirian los jump's xq tendrias siempre todas las flags en 000
           Registers:        No estarias nunca habilitando la salida
           PC:               No dejaria cargar nada en el PC
           Decode:           Estarias siempre operando con el valor inmediato 00000000
           ControlUnit:      Estarias siempre direccionando a la 000 de la ROM
+
+c) Vale siempre 1:
+          ALU:              Estarias eligiendo siempre la misma operacion
+          Memory:           Estarias apuntando siempre a la direccion 1111
+          microOrgaSmall:   No servirian los jumps xq todos los flags estarian en 111
+          Registers:        Siempre estarias dejando salir un registro (podria generar cortocircuito)
+          PC:               Estarias siempre cargando lo que este en el buss 
+          Decode:           Estarias siempre operando con constante 11111111
+          ControlUnit:      Estarias siempre direccionando a la 111 de la ROM
 
 
 
