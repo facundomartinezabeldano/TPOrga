@@ -1,0 +1,146 @@
+========================Checkpoint 1:=============================================================================================================
+
+
+a)¿Cual es el tamaño de la memoria?
+rta: 256 palabras / 256 bytes
+
+b)¿Cuántas instruciones sin operandos se podrían agregar respetando el formato de instrucción actual?
+rta: ( 2^11 - 10 )  pues tenemos instruciones de 16 bits
+
+c)Sin respetar el formato de instruccion ¿cuantas instrucciones sin operandos se pueden agregar?
+rta: 2^5
+rta: 2^8
+
+d)¿Que tamaño tiene el PC?
+rta: 8 bits (1 palabra) / 1 byte
+
+e)¿Donde se encuentra y que tamaño tiene el IR?
+rta: abajo a la izquierda conectado al Decode.
+     cada IR tiene 8 bits / 1byte , 1 para high, 1 para low.
+
+
+
+========================Checkpoint 2:=============================================================================================================
+
+a) Incrementa el PC
+b) Habilita la escritura de salida de la ALU / Habilita la escritura de las flags de la ALU
+c) Saltos condicionales:
+                       ++++
+                                                                                          
+d) La señal habilita la salida al bus para un valor inmediato o direccion.
+   los dos multiplexores conectados al decode y al registro (RB_selecIndexOut/in)
+
+
+=======================Checkpoint 3:==============================================================================================================
+
+a) guarda constantes en R0 y R1, hace una suma con esos registros, esa suma tienen carry, entonces el JC salta a 'Siguiente'
+   hace la suma con los registros otra vez, y ahora no deja carry, entonces el JC no salta, y sigue con el 'halt'
+
+b)  
+        JMP seguir      0x00    
+ seguir:         	0x02    
+        SET R0, 0xFF    0x02    
+        SET R1, 0x11    0x04    
+ siguiente: 		0x04    
+        ADD R0, R1      0x06    
+        JC siguiente    0x08    
+ halt:		 	0x0A    
+        JMP halt        0x0A    
+
+
+c) 49 de reloj
+d) para el ADD son 5 micro instrucciones:
+                                        RB_enOut  ALU_enA  RB_selectIndexOut=0
+                                        RB_enOut  ALU_enB  RB_selectIndexOut=1
+                                        ALU_OP=ADD ALU_opW
+                                        RB_enIn   ALU_enOut RB_selectIndexIn=0
+                                        reset_microOp
+   para el salto son 2:
+                         PC_load DE_enOutImm
+                         reset_microOp
+
+   para saltos condicionales (JX) son 4: 
+				JX_microOp load_microOp
+    				reset_microOp
+    				DE_enOutImm PC_load
+   		 		reset_microOp 
+
+e) Cada instrucción tarda ciclos/32 segundos
+      JMP = 6 ciclos --> 6/32 seg --> 187.5  ms
+      SET = 6 ciclos --> 6/32 seg --> 187.5  ms
+      ADD = 9 ciclos --> 9/32 seg --> 281.25 ms
+      JC  = 8 ciclos --> 8/32 seg --> 250    ms
+	
+
+=====================Checkpoint 4:===============================================================================================================
+
+a) Se corta:
+          ALU:              No podriamos elegir la operacion
+          Memory:           No podriamos direccionar a memoria
+          microOrgaSmall:   No le llegarian las flags a la ControlUnit
+          Registers:        No podriamos ver el registro que sale
+          PC:               No podriamos cargar el PC
+          Decode:           No podriamos operar con valores inmediatos (xq no veriamos los primeros 8 bits)
+          ControlUnit:      No podriamos aumentar el microPC
+
+b) Vale siempre cero:   
+          ALU:              Estarias siempre eligiendo la operacion 0 de los multiplexores
+          Memory:           Estarias apuntando siempre a la misma direccion de memoria
+          microOrgaSmall:   No servirian los jump's xq tendrias siempre todas las flags en 000
+          Registers:        No estarias nunca habilitando la salida
+          PC:               No dejaria cargar nada en el PC
+          Decode:           Estarias siempre operando con el valor inmediato 00000000
+          ControlUnit:      Estarias siempre direccionando a la 000 de la ROM
+
+c) Vale siempre 1:
+          ALU:              Estarias eligiendo siempre la misma operacion
+          Memory:           Estarias apuntando siempre a la direccion 1111
+          microOrgaSmall:   No servirian los jumps xq todos los flags estarian en 111
+          Registers:        Siempre estarias dejando salir un registro (podria generar cortocircuito)
+          PC:               Estarias siempre cargando lo que este en el buss 
+          Decode:           Estarias siempre operando con constante 11111111
+          ControlUnit:      Estarias siempre direccionando a la 111 de la ROM
+
+
+======================Checkpoint 5:===============================================================================================================
+
+
+main:      SET R1 0x00
+           SET R0 0xn
+loop:
+           ADD R1 R0
+           DEC R0
+           JZ fin
+           JMP loop
+fin:
+	   JMP fin
+
+
+======================Checkpoint 6:===============================================================================================================
+
+
+
+  a)01001: ; SIG
+    ALU_OP=cte0x01      ALU_enOut   ALU_enA             ; ALU_A := 0x01
+    RB_enOut            ALU_enB     RB_selectIndexOut=0 ; ALU_B := Rx
+    ALU_OP=ADD                                          ;  A + B
+    RB_enIn             ALU_enOut   RB_selectIndexIn=0  ; Rx := ALU_Out
+    reset_microOp
+
+
+  b)01010: ; NEG
+    ALU_OP=cte0xFF     ALU_enOut   ALU_enA              ; ALU_A := 0xFF
+    RB_enOut           ALU_enB     RB_selectIndexOut=0  ; ALU_B := Rx
+    ALU_OP=XOR                                          ; ALU_XOR
+    ALU_enB            ALU_enOut                        ; ALU_B := ALU_Out
+    ALU_OP=cte0x01     ALU_enOut   ALU_enA              ; ALU_A := 0x01
+    ALU_OP=ADD                                          ; ALU_ADD
+    RB_enIn            ALU_enOut   RB_selectIndexIn=0   ; Rx := ALU_Out
+    reset_microOp
+
+  c)01011: ; MRG
+    RB_enOut      ALU_enA     RB_selectIndexOut=0
+    RB_enOut      ALU_enB     RB_selectIndexOut=1
+    ALU_OP=MRG
+    RB_enIn       ALU_enOut   RB_selectIndexIn=0
+    reset_microOp
