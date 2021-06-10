@@ -1,0 +1,21 @@
+Ejercicio 1:
+
+a) Fetch:
+        PC
+    Decode:
+b)Durante el Fetch 
+c)En la ControlUnit
+d)
+e)Lo hace utilizando dos JUMP uno para la rama positiva y otro para la rama negativa 
+
+Ejercicio 2:
+
+a)En logisim
+b)Si siempre esta en 0 nunca vas a ejecutar las interrupciones
+  Si siempre esta en 1 siempre vas a ejecturas las interrupciones (se podria interrumpir en todo momento)
+
+Ejercicio 3:
+
+Ejercicio 4:
+
+Ejercicio 5:
